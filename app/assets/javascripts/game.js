@@ -1,14 +1,8 @@
 (function(canvas) {
-  var Player = function(_spritesheet, _game) {
+  var Player = function(myName) {
     var root = this;
 
-    root.w = _spritesheet.map['ship'].w;
-
-    root.h = spritesheet.map['ship'].h;
-
-    root.x = _game.width / 2 - root.w / 2;
-
-    root.y = _game.height - 10 - root.h;
+    root.myName = myName;
 
     root.vx = 0;
 
@@ -20,21 +14,16 @@
     root.maxVel = 200;
 
     root.step = function(_frameRate) {
-      if(_game.keys['left']) {root.x -= root.maxVel * _frameRate}
-      else if(_game.keys['right']) {root.x += root.maxVel * _frameRate;}
-      else {this.vx = 0;}
-
-      if(root.x < 0){
-        root.x = 0;
-      } else if(root.x > _game.width - root.w){
-        root.x = _game.width - root.w;
-      }
-
-      root.reload -= _frameRate;
     }
 
-    root.draw = function(_ctx) {
-      _spritesheet.draw(_ctx, 'ship', root.x, root.y);
+    root.draw = function(ctx, spritesheet, gameWidth, gameHeight) {
+      var mySprite = spritesheet.map[root.myName],
+      w = mySprite.w,
+      h = mySprite.h,
+      x = gameWidth / 2 - w / 2,
+      y = gameHeight - 10 - h;
+
+      spritesheet.draw(ctx, root.myName, x, y, mySprite.frames);
     }
   };
 
@@ -96,8 +85,8 @@
     };
 
     // calls draw on each thing
-    root.draw = function(ctx, spritesheet) {
-      root.iterate('draw', ctx, spritesheet);
+    root.draw = function(ctx, spritesheet, gameWidth, gameHeight) {
+      root.iterate('draw', ctx, spritesheet, gameWidth, gameHeight);
     };
   };
 
@@ -107,22 +96,22 @@
 
     root.map = {};
 
-    root.load = function(_spriteData, _callback) {
-      root.map = _spriteData;
+    root.load = function(spriteData, callback) {
+      root.map = spriteData;
 
       root.image = new Image();
 
-      root.image.onload = _callback;
+      root.image.onload = callback;
 
       root.image.src = '/assets/sprites.png';
     };
 
-    root.draw = function(_ctx, _sprite, _x, _y, _frame) {
-      var s = root.map[_sprite];
+    root.draw = function(ctx, sprite, x, y, frame) {
+      var s = root.map[sprite];
 
-      if(!_frame) _frame = 0;
+      if(!frame) frame = 0;
 
-      _ctx.drawImage(root.image, s.sx + _frame * s.w, s.sy, s.w, s.h, Math.floor(_x), Math.floor(_y), s.w, s.h);
+      ctx.drawImage(root.image, s.sx, s.sy, s.w, s.h, Math.floor(x), Math.floor(y), s.w, s.h);
     };
   };
 
@@ -155,8 +144,8 @@
       }, false);
     };
 
-    root.setupDrawing = function(canvasElementId, spritesheet) {
-      root.canvas = document.getElementById(canvasElementId);
+    root.setupDrawing = function(canvas, spritesheet) {
+      root.canvas = canvas;
 
       root.width = root.canvas.width;
 
@@ -168,7 +157,7 @@
     };
 
     root.addBoard = function(board) {
-      root.boards.push(board);
+      boards.push(board);
     };
 
     // game loop
@@ -180,7 +169,7 @@
 
       for(var i=0, len = boards.length; i < len; i++) {
         if(boards[i]) {
-          boards[i].draw(root.ctx, root.spritesheet);
+          boards[i].draw(root.ctx, root.spritesheet, root.width, root.height);
         }
       }
 
@@ -199,7 +188,13 @@
 
   game.setupInput();
 
-  game.setupDrawing('game', spritesheet);
+  game.setupDrawing(canvas, spritesheet);
+
+  var board = new Gameboard();
+
+  board.add(new Player('ship'));
+
+  game.addBoard(board);
 
   spritesheet.load(sprites, game.loop);
 
