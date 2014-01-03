@@ -126,13 +126,45 @@
     };
   };
 
-  // running the game, can have only one
-  var game = new function() {
+  // running the game, should have only one
+  // todo, somehow make only one
+  var Game = function() {
     var root = this;
 
     // game loop
     var boards = [];
 
+    // work with keys
+    root.setupInput = function() {
+      window.addEventListener('keydown', function(e) {
+        e.preventDefault();
+
+        var keyCode = e.keyCode;
+
+        if(KEY_CODES[keyCode]) root.keys[KEY_CODES[keyCode]] = true;
+      }, false);
+
+      window.addEventListener('keyup', function(e) {
+        e.preventDefault();
+
+        var keyCode = e.keyCode;
+
+        if(KEY_CODES[keyCode]) root.keys[KEY_CODES[keyCode]] = false;
+      }, false);
+    };
+
+    root.setupDrawing = function(canvasElementId) {
+      root.canvas = document.getElementById(canvasElementId);
+
+      root.width = root.canvas.width;
+
+      root.height = root.canvas.height;
+
+      root.ctx = root.canvas.getContext('2d');
+    };
+
+    // game loop
+    // everything happens here
     root.loop = function () {
       var frames = 30;
 
@@ -147,10 +179,6 @@
 
       setTimeout(root.loop, frames);
     };
-
-    root.setup = function() {
-      root.loop();
-    };
   };
 
   // sprites i have
@@ -158,6 +186,12 @@
     ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1}
   };
 
-  spritesheet.load(sprites, game.setup);
+  var game = new Game();
+
+  game.setupInput();
+
+  game.setupDrawing('game');
+
+  spritesheet.load(sprites, game.loop);
 
 })(document.getElementById('game'));
