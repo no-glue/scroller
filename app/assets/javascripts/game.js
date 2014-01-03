@@ -13,15 +13,16 @@
 
     root.maxVel = 200;
 
-    root.step = function(game, frameRate) {
+    root.step = function(game, frameRate, setup) {
       var mySprite = game.spritesheet.map[root.myName],
       myWidth = mySprite.w,
       myHeight = mySprite.h;
 
       if(typeof root.x == 'undefined' || typeof root.y == 'undefined') {
+        setup();
         root.x = game.width / 2 - myWidth / 2;
         root.y = game.height - 10 - myHeight;
-      };
+      }
 
       if(game.keys['left']) {root.x -= root.maxVel * frameRate}
       else if(game.keys['right']) {root.x += root.maxVel * frameRate;}
@@ -43,6 +44,7 @@
   // todo, scrolling background
   var Starfield = function(speed, clear) {
     var root = this;
+
     // draw off screen first
     var stars = document.createElement('canvas');
 
@@ -51,18 +53,12 @@
     var offset = 0;
 
     // update starfield
-    root.step = function(game, frameRate) {
-      stars.width = game.width;
+    root.step = function(game, frameRate, setup) {
+      var setup = setup(game, stars, starsCtx);
 
-      stars.height = game.height;
+      stars = setup.stars;
 
-      // if the _clear option is set
-      // make the background black instead of transparent
-      if(clear) {
-        starsCtx.fillStyle = '#000';
-
-        starsCtx.fillRect(0, 0, stars.width, stars.height);
-      }
+      starsCtx = setup.starsCtx;
 
       offset += frameRate * speed;
 
@@ -96,11 +92,16 @@
     // the current list of objects
     root.objects = [];
 
+    // callbacks for setting up things
+    root.setups = [];
+
     // add a new object to the object list
-    root.add = function(thing) {
+    root.add = function(thing, setup) {
       thing.board = this;
       
       root.objects.push(thing);
+
+      root.setups.push(setup);
 
       return thing;
     };
@@ -130,6 +131,14 @@
 
       for(var i=0, len = root.objects.length; i < len; i++) {
         var obj = root.objects[i];
+
+        var setup = root.setups[i];
+
+        if(!i) args.push(setup);
+        else {
+          args.pop();
+          args.push(setup);
+        }
 
         // works on this with args as array
         obj[funcName].apply(obj, args);
@@ -249,6 +258,23 @@
     ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1}
   };
 
+  var setups = {
+    starfield: function(game, stars, starsCtx) {
+      stars.width = game.width;
+
+      stars.height = game.height;
+
+      starsCtx.fillStyle = '#000';
+
+      starsCtx.fillRect(0, 0, stars.width, stars.height);
+
+      return {stars: stars, starsCtx: starsCtx};
+    },
+    ship: function(ship) {
+      console.log('ship setup');
+    },
+  };
+
   var game = new Game();
 
   game.setupInput();
@@ -257,9 +283,9 @@
 
   var board = new Gameboard();
 
-  board.add(new Starfield(1, true));
+  board.add(new Starfield(1, true), setups.starfield);
 
-  board.add(new Player('ship'));
+  board.add(new Player('ship'), setups.ship);
 
   game.addBoard(board);
 
