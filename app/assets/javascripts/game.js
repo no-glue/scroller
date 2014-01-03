@@ -13,18 +13,78 @@
 
     root.maxVel = 200;
 
-    root.step = function(_frameRate) {
+    root.step = function(game, frameRate) {
+      var mySprite = game.spritesheet.map[root.myName],
+      myWidth = mySprite.w,
+      myHeight = mySprite.h;
+
+      if(typeof root.x == 'undefined' || typeof root.y == 'undefined') {
+        root.x = game.width / 2 - myWidth / 2;
+        root.y = game.height - 10 - myHeight;
+      };
+
+      if(game.keys['left']) {root.x -= root.maxVel * frameRate}
+      else if(game.keys['right']) {root.x += root.maxVel * frameRate;}
+      else {root.vx = 0;}
+
+      if(root.x < 0) {
+        root.x = 0;
+      } else if(root.x > game.width - myWidth) {
+        root.x = game.width - myWidth;
+      }
     }
 
-    root.draw = function(ctx, spritesheet, gameWidth, gameHeight) {
-      var mySprite = spritesheet.map[root.myName],
-      w = mySprite.w,
-      h = mySprite.h,
-      x = gameWidth / 2 - w / 2,
-      y = gameHeight - 10 - h;
-
-      spritesheet.draw(ctx, root.myName, x, y, mySprite.frames);
+    // todo, root.myName get it locally
+    root.draw = function(ctx) {
+      spritesheet.draw(ctx, root.myName, root.x, root.y);
     }
+  };
+
+  // todo, scrolling background
+  var Starfield = function(speed, clear) {
+    var root = this;
+    // draw off screen first
+    var stars = document.createElement('canvas');
+
+    var starsCtx = stars.getContext('2d');
+
+    var offset = 0;
+
+    // update starfield
+    root.step = function(game, frameRate) {
+      stars.width = game.width;
+
+      stars.height = game.height;
+
+      // if the _clear option is set
+      // make the background black instead of transparent
+      if(clear) {
+        starsCtx.fillStyle = '#000';
+
+        starsCtx.fillRect(0, 0, stars.width, stars.height);
+      }
+
+      offset += frameRate * speed;
+
+      offset = offset % stars.height;
+    };
+
+    // this is called every frame
+    // to draw starfield on to the canvas
+    root.draw = function(ctx) {
+      var intOffset = Math.floor(offset);
+
+      var remaining = stars.height - intOffset;
+
+      // draw the top half of the starfield
+      if(intOffset > 0) {
+        ctx.drawImage(stars, 0, remaining, stars.width, intOffset, 0, 0, stars.width, intOffset);
+      }
+
+      if(remaining > 0){
+        ctx.drawImage(stars, 0, 0, stars.width, remaining, 0, intOffset, stars.width, remaining);
+      }
+    };
   };
 
   // game board
@@ -77,16 +137,16 @@
     };
 
     // does things in step
-    root.step = function(frameRate) {
+    root.step = function(game, frameRate) {
       root.resetRemoved();
       // for each thing call step
-      root.iterate('step', frameRate);
+      root.iterate('step', game, frameRate);
       root.finalizeRemoved();
     };
 
     // calls draw on each thing
-    root.draw = function(ctx, spritesheet, gameWidth, gameHeight) {
-      root.iterate('draw', ctx, spritesheet, gameWidth, gameHeight);
+    root.draw = function(ctx) {
+      root.iterate('draw', ctx);
     };
   };
 
@@ -123,7 +183,10 @@
     // game loop
     var boards = [];
 
-    var KEY_CODES = {};
+    var KEY_CODES = {37: 'left', 39: 'right', 32: 'fire'};
+
+    // keys actually pressed
+    root.keys = {};
 
     // work with keys
     root.setupInput = function() {
@@ -169,7 +232,9 @@
 
       for(var i=0, len = boards.length; i < len; i++) {
         if(boards[i]) {
-          boards[i].draw(root.ctx, root.spritesheet, root.width, root.height);
+          boards[i].step(root, frameRate);
+
+          boards[i].draw(root.ctx);
         }
       }
 
@@ -191,6 +256,8 @@
   game.setupDrawing(canvas, spritesheet);
 
   var board = new Gameboard();
+
+  board.add(new Starfield(1, true));
 
   board.add(new Player('ship'));
 
