@@ -96,8 +96,8 @@
     };
 
     // calls draw on each thing
-    root.draw = function(_ctx, _spritesheet) {
-      root.iterate('draw', _ctx, _spritesheet);
+    root.draw = function(ctx, spritesheet) {
+      root.iterate('draw', ctx, spritesheet);
     };
   };
 
@@ -134,6 +134,8 @@
     // game loop
     var boards = [];
 
+    var KEY_CODES = {};
+
     // work with keys
     root.setupInput = function() {
       window.addEventListener('keydown', function(e) {
@@ -153,7 +155,7 @@
       }, false);
     };
 
-    root.setupDrawing = function(canvasElementId) {
+    root.setupDrawing = function(canvasElementId, spritesheet) {
       root.canvas = document.getElementById(canvasElementId);
 
       root.width = root.canvas.width;
@@ -161,6 +163,12 @@
       root.height = root.canvas.height;
 
       root.ctx = root.canvas.getContext('2d');
+
+      root.spritesheet = spritesheet;
+    };
+
+    root.addBoard = function(board) {
+      root.boards.push(board);
     };
 
     // game loop
@@ -172,6 +180,7 @@
 
       for(var i=0, len = boards.length; i < len; i++) {
         if(boards[i]) {
+          boards[i].draw(root.ctx, root.spritesheet);
         }
       }
 
@@ -190,7 +199,7 @@
 
   game.setupInput();
 
-  game.setupDrawing('game');
+  game.setupDrawing('game', spritesheet);
 
   spritesheet.load(sprites, game.loop);
 
