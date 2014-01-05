@@ -314,6 +314,42 @@
 
       return {x: x, y: y, myWidth: myWidth};
     },
+    enemy: function(game, enemy, frameRate) {
+      var t = enemy.t + frameRate,
+      vx = enemy.A + enemy.B * Math.sin(enemy.C * t + enemy.D),
+      vy = enemy.E + enemy.F * Math.sin(enemy.G * t + enemy.H),
+      x = enemy.x + frameRate * vx,
+      y = enemy.y + frameRate * vy,
+      blueprint = enemy.blueprint,
+      override = enemy.override,
+      params = {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+        t: t,
+        x: x,
+        y: y
+      };
+
+      var setParams = function(params, list) {
+        for(var i in list) {
+          params[i] = list[i];
+        }
+
+        return params;
+      };
+
+      params = setParams(params, blueprint);
+
+      params = setParams(params, override);
+
+      return params;
+    }
   };
 
   var game = new Game();
