@@ -39,6 +39,34 @@
     }
   };
 
+  var Enemy = function(myName, blueprint, override) {
+    var root = this;
+
+    root.myName = myName;
+
+    root.blueprint = blueprint;
+
+    root.override = override;
+
+    root.step = function(game, frameRate, setup) {
+      var params = setup();
+
+      root.t = params.t;
+
+      root.vx = params.vx;
+
+      root.vy = params.vy;
+
+      root.x = params.x;
+
+      root.y = params.y;
+    };
+
+    root.draw = function(ctx, spritesheet) {
+      spritesheet.draw(ctx, root.myName, root.x, root.y);
+    };
+  };
+
   // todo, scrolling background
   var Starfield = function(speed, clear) {
     var root = this;
@@ -152,8 +180,8 @@
     };
 
     // calls draw on each thing
-    root.draw = function(ctx) {
-      root.iterate('draw', ctx);
+    root.draw = function(ctx, spritesheet) {
+      root.iterate('draw', ctx, spritesheet);
     };
   };
 
@@ -241,7 +269,7 @@
         if(boards[i]) {
           boards[i].step(root, frameRate);
 
-          boards[i].draw(root.ctx);
+          boards[i].draw(root.ctx, root.spritesheet);
         }
       }
 
