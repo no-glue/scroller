@@ -14,15 +14,13 @@
     root.maxVel = 200;
 
     root.step = function(game, frameRate, setup) {
-      var mySprite = game.spritesheet.map[root.myName],
-      myWidth = mySprite.w,
-      myHeight = mySprite.h;
+      var position = setup(game, root);
 
-      if(typeof root.x == 'undefined' || typeof root.y == 'undefined') {
-        setup();
-        root.x = game.width / 2 - myWidth / 2;
-        root.y = game.height - 10 - myHeight;
-      }
+      root.x = position.x;
+
+      root.y = position.y;
+
+      var myWidth = position.myWidth;
 
       if(game.keys['left']) {root.x -= root.maxVel * frameRate}
       else if(game.keys['right']) {root.x += root.maxVel * frameRate;}
@@ -270,8 +268,23 @@
 
       return {stars: stars, starsCtx: starsCtx};
     },
-    ship: function(ship) {
-      console.log('ship setup');
+    ship: function(game, ship) {
+      var mySprite = game.spritesheet.map[ship.myName],
+      myWidth = mySprite.w,
+      myHeight = mySprite.h,
+      x = y = 0;
+
+      if(typeof ship.x == 'undefined' || typeof ship.y == 'undefined') {
+        x = game.width / 2 - myWidth / 2;
+
+        y = game.height - 10 - myHeight;
+      } else {
+        x = ship.x;
+
+        y = ship.y;
+      }
+
+      return {x: x, y: y, myWidth: myWidth};
     },
   };
 
