@@ -45,7 +45,7 @@
       for(var i = 0, len = board.objects.length; i < len; i++) {
         var current = board.objects[i];
 
-        if(root !== current) {
+        if(current.type === 'enemy' ) {
           var objectca = root.x + root.height / 2,
           objectcb = root.y + root.height / 2,
           currentca = current.x + current.height / 2,
@@ -64,12 +64,14 @@
     }
   };
 
-  var Enemy = function(myName, blueprint) {
+  var Enemy = function(myName, type, blueprint) {
     var root = this;
 
     root.myName = myName;
 
     root.blueprint = blueprint;
+
+    root.type = type;
 
     root.step = function(game, frameRate, setup) {
       var params = setup.setup(game, root, frameRate, setup.set);
@@ -436,7 +438,7 @@
 
   board.add(new Player('ship'), setups.ship);
 
-  board.add(new Enemy('enemyPurple', enemies.basic), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic), setups.enemy);
 
   game.addBoard(board);
 
