@@ -1,4 +1,29 @@
 (function(canvas) {
+  // make player missile
+  var FactoryPlayerMissile = function(myName, x, y, vy) {
+    var PlayerMissile = function(myName, x, y, vy) {
+      var root = this;
+
+      root.myName = myName;
+
+      root.x = x;
+
+      root.y = y;
+
+      root.vy = vy;
+
+      root.step = function(game, frameRate, setup) {
+        root.y += root.vy * frameRate;
+      };
+
+      root.draw = function(ctx, spritesheet) {
+        spritesheet.draw(ctx, root.myName, root.x, root.y);
+      };
+    };
+
+    return new PlayerMissile(myName, x, y, vy);
+  };
+
   var Player = function(myName) {
     var root = this;
 
