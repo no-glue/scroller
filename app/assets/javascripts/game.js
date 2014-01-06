@@ -13,7 +13,7 @@
 
     root.maxVel = 200;
 
-    root.step = function(game, frameRate, setup) {
+    root.step = function(game, frameRate, board, setup) {
       var position = setup(game, root);
 
       root.x = position.x;
@@ -39,27 +39,23 @@
     }
   };
 
-  var Enemy = function(myName, blueprint, override) {
+  var Enemy = function(myName, blueprint) {
     var root = this;
 
     root.myName = myName;
 
     root.blueprint = blueprint;
 
-    root.override = override;
-
-    root.step = function(game, frameRate, setup) {
-      var params = setup();
+    root.step = function(game, frameRate, board, setup) {
+      var params = setup.setup(game, root, frameRate, setup.set);
 
       root.t = params.t;
-
-      root.vx = params.vx;
-
-      root.vy = params.vy;
 
       root.x = params.x;
 
       root.y = params.y;
+
+      if(root.y > game.height) board.remove(root);
     };
 
     root.draw = function(ctx, spritesheet) {
@@ -79,7 +75,7 @@
     var offset = 0;
 
     // update starfield
-    root.step = function(game, frameRate, setup) {
+    root.step = function(game, frameRate, board, setup) {
       var setup = setup(game, stars, starsCtx);
 
       stars = setup.stars;
@@ -175,7 +171,7 @@
     root.step = function(game, frameRate) {
       root.resetRemoved();
       // for each thing call step
-      root.iterate('step', game, frameRate);
+      root.iterate('step', game, frameRate, root);
       root.finalizeRemoved();
     };
 
@@ -281,7 +277,13 @@
 
   // sprites i have
   var sprites = {
-    ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1}
+    ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1},
+    enemyPurple: {sx: 37, sy: 0, w: 42, h: 43, frames: 1}
+  };
+
+  // behaviour of enemies
+  var enemies = {
+    basic: {x: 100, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
   };
 
   var setups = {
@@ -314,41 +316,47 @@
 
       return {x: x, y: y, myWidth: myWidth};
     },
-    enemy: function(game, enemy, frameRate) {
-      var t = enemy.t + frameRate,
-      vx = enemy.A + enemy.B * Math.sin(enemy.C * t + enemy.D),
-      vy = enemy.E + enemy.F * Math.sin(enemy.G * t + enemy.H),
-      x = enemy.x + frameRate * vx,
-      y = enemy.y + frameRate * vy,
-      blueprint = enemy.blueprint,
-      override = enemy.override,
-      params = {
-        A: 0,
-        B: 0,
-        C: 0,
-        D: 0,
-        E: 0,
-        F: 0,
-        G: 0,
-        H: 0,
-        t: t,
-        x: x,
-        y: y
-      };
+    enemy: {
+      setup: function(game, enemy, frameRate, set) {
+        var t = (typeof enemy.t === 'undefined') ? 0 : enemy.t,
+        t = t + frameRate,
+        blueprint = enemy.blueprint,
+        params = {
+          A: 0,
+          B: 0,
+          C: 0,
+          D: 0,
+          E: 0,
+          F: 0,
+          G: 0,
+          H: 0
+        },
+        out = {
+          t: t,
+          x: 0,
+          y: 0
+        };
 
-      var setParams = function(params, list) {
-        for(var i in list) {
-          params[i] = list[i];
-        }
+        set(params, blueprint);
 
-        return params;
-      };
+        var vx = params.A + params.B * Math.sin(params.C * t + params.D),
+        vy = params.E + params.F * Math.sin(params.G * t + params.H),
+        x = (typeof enemy.x === 'undefined') ? 0 : enemy.x,
+        x = x + frameRate * vx,
+        y = (typeof enemy.y === 'undefined') ? 0 : enemy.y,
+        y = y + frameRate * vy;
 
-      params = setParams(params, blueprint);
+        out.x = x;
 
-      params = setParams(params, override);
+        out.y = y;
 
-      return params;
+        return out;
+      },
+      set: function(params, list) {
+          for(var i in list) {
+            params[i] = list[i];
+          }
+      }
     }
   };
 
@@ -363,6 +371,8 @@
   board.add(new Starfield(1, true), setups.starfield);
 
   board.add(new Player('ship'), setups.ship);
+
+  board.add(new Enemy('enemyPurple', enemies.basic), setups.enemy);
 
   game.addBoard(board);
 
