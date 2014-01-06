@@ -13,14 +13,16 @@
 
     root.maxVel = 200;
 
-    root.step = function(game, frameRate, board, setup) {
+    root.step = function(game, frameRate, setup) {
       var position = setup(game, root);
 
       root.x = position.x;
 
       root.y = position.y;
 
-      var myWidth = position.myWidth;
+      root.width = position.myWidth;
+
+      root.height = position.myHeight;
 
       if(game.keys['left']) {root.x -= root.maxVel * frameRate}
       else if(game.keys['right']) {root.x += root.maxVel * frameRate;}
@@ -28,14 +30,37 @@
 
       if(root.x < 0) {
         root.x = 0;
-      } else if(root.x > game.width - myWidth) {
-        root.x = game.width - myWidth;
+      } else if(root.x > game.width - root.width) {
+        root.x = game.width - root.width;
       }
     }
 
     // todo, root.myName get it locally
     root.draw = function(ctx) {
       spritesheet.draw(ctx, root.myName, root.x, root.y);
+    }
+
+    // check if this collides with something
+    root.collide = function(game, board) {
+      for(var i = 0, len = board.objects.length; i < len; i++) {
+        var current = board.objects[i];
+
+        if(root !== current) {
+          var objectca = root.x + root.height / 2,
+          objectcb = root.y + root.height / 2,
+          currentca = current.x + current.height / 2,
+          currentcb = current.y + current.height / 2;
+
+          var sumRadius = root.height / 2 + current.height / 2;
+
+          var distance = Math.floor(Math.sqrt(Math.pow(objectca - currentca, 2) + Math.pow(objectcb - currentcb, 2)));
+
+
+          if(distance <= sumRadius) {
+            game.setRunning(false);
+          }
+        }
+      }
     }
   };
 
@@ -46,7 +71,7 @@
 
     root.blueprint = blueprint;
 
-    root.step = function(game, frameRate, board, setup) {
+    root.step = function(game, frameRate, setup) {
       var params = setup.setup(game, root, frameRate, setup.set);
 
       root.t = params.t;
@@ -55,11 +80,18 @@
 
       root.y = params.y;
 
+      root.width = params.myWidth;
+
+      root.height = params.myHeight;
+
       if(root.y > game.height) board.remove(root);
     };
 
     root.draw = function(ctx, spritesheet) {
       spritesheet.draw(ctx, root.myName, root.x, root.y);
+    };
+
+    root.collide = function(game, board) {
     };
   };
 
@@ -75,7 +107,7 @@
     var offset = 0;
 
     // update starfield
-    root.step = function(game, frameRate, board, setup) {
+    root.step = function(game, frameRate, setup) {
       var setup = setup(game, stars, starsCtx);
 
       stars = setup.stars;
@@ -103,6 +135,8 @@
         ctx.drawImage(stars, 0, 0, stars.width, remaining, 0, intOffset, stars.width, remaining);
       }
     };
+
+    root.collide = function(game, board) {};
   };
 
   // game board
@@ -116,6 +150,9 @@
 
     // callbacks for setting up things
     root.setups = [];
+
+    // objects that collide
+    root.collissions = [];
 
     // add a new object to the object list
     root.add = function(thing, setup) {
@@ -170,14 +207,29 @@
     // does things in step
     root.step = function(game, frameRate) {
       root.resetRemoved();
+
       // for each thing call step
-      root.iterate('step', game, frameRate, root);
+      root.iterate('step', game, frameRate);
+
+      root.iterate('collide', game, root);
+
       root.finalizeRemoved();
     };
 
     // calls draw on each thing
     root.draw = function(ctx, spritesheet) {
       root.iterate('draw', ctx, spritesheet);
+    };
+
+    // end the game
+    root.end = function() {
+      for(var i = 0, len = root.objects.length; i < len; i++) {
+        var object = root.objects[i];
+
+        root.remove(object);
+      }
+
+      root.finalizeRemoved();
     };
   };
 
@@ -218,6 +270,9 @@
 
     // keys actually pressed
     root.keys = {};
+
+    // whether a game is running
+    root.running = true;
 
     // work with keys
     root.setupInput = function() {
@@ -271,7 +326,11 @@
 
       console.log('looping');
 
-      setTimeout(root.loop, frames);
+      if(root.running) setTimeout(root.loop, frames);
+    };
+
+    root.setRunning = function(value) {
+      root.running = value;
     };
   };
 
@@ -314,13 +373,16 @@
         y = ship.y;
       }
 
-      return {x: x, y: y, myWidth: myWidth};
+      return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
     },
     enemy: {
       setup: function(game, enemy, frameRate, set) {
         var t = (typeof enemy.t === 'undefined') ? 0 : enemy.t,
         t = t + frameRate,
         blueprint = enemy.blueprint,
+        mySprite = game.spritesheet.map[enemy.myName],
+        myWidth = mySprite.w,
+        myHeight = mySprite.h,
         params = {
           A: 0,
           B: 0,
@@ -334,7 +396,9 @@
         out = {
           t: t,
           x: 0,
-          y: 0
+          y: 0,
+          myWidth: myWidth,
+          myHeight: myHeight
         };
 
         set(params, blueprint);
