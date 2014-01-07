@@ -14,6 +14,8 @@
 
       root.step = function(game, frameRate, board, setup) {
         root.y += root.vy * frameRate;
+
+        if(root.y < 0) board.remove(root);
       };
 
       root.draw = function(ctx, spritesheet) {
@@ -61,13 +63,7 @@
         root.x = game.width - root.width;
       }
 
-      if(game.keys['fire']) {
-        var missileOne = setup.fire('missile', root.x, root.y, -700);
-
-        board.add(missileOne, function() {});
-
-        console.log('fire', missileOne);
-      }
+      if(game.keys['fire']) setup.addMissiles('missile', root.x, root.y, -700, root.width, board, setup.fire);
     }
 
     // todo, root.myName get it locally
@@ -409,7 +405,18 @@
 
         return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
       },
-      fire: FactoryPlayerMissile
+      fire: FactoryPlayerMissile,
+      addMissiles: function(myName, x, y, vy, width, board, fire) {
+        var missileOne = fire(myName, x, y, vy);
+
+        board.add(missileOne, function() {});
+
+        var missileTwo = fire(myName, x + width, y, vy);
+
+        board.add(missileTwo, function() {});
+
+        console.log('fire', missileOne);
+      }
     },
     enemy: {
       setup: function(game, enemy, frameRate, set) {
