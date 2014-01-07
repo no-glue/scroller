@@ -12,13 +12,15 @@
 
       root.vy = vy;
 
-      root.step = function(game, frameRate, setup) {
+      root.step = function(game, frameRate, board, setup) {
         root.y += root.vy * frameRate;
       };
 
       root.draw = function(ctx, spritesheet) {
         spritesheet.draw(ctx, root.myName, root.x, root.y);
       };
+
+      root.collide = function(root, board) {};
     };
 
     return new PlayerMissile(myName, x, y, vy);
@@ -38,8 +40,8 @@
 
     root.maxVel = 200;
 
-    root.step = function(game, frameRate, setup) {
-      var position = setup(game, root);
+    root.step = function(game, frameRate, board, setup) {
+      var position = setup.setup(game, root);
 
       root.x = position.x;
 
@@ -57,6 +59,14 @@
         root.x = 0;
       } else if(root.x > game.width - root.width) {
         root.x = game.width - root.width;
+      }
+
+      if(game.keys['fire']) {
+        var missileOne = setup.fire('missile', root.x, root.y, -700);
+
+        board.add(missileOne, function() {});
+
+        console.log('fire', missileOne);
       }
     }
 
@@ -98,7 +108,7 @@
 
     root.type = type;
 
-    root.step = function(game, frameRate, setup) {
+    root.step = function(game, frameRate, board, setup) {
       var params = setup.setup(game, root, frameRate, setup.set);
 
       root.t = params.t;
@@ -134,7 +144,7 @@
     var offset = 0;
 
     // update starfield
-    root.step = function(game, frameRate, setup) {
+    root.step = function(game, frameRate, board, setup) {
       var setup = setup(game, stars, starsCtx);
 
       stars = setup.stars;
@@ -178,13 +188,8 @@
     // callbacks for setting up things
     root.setups = [];
 
-    // objects that collide
-    root.collissions = [];
-
     // add a new object to the object list
     root.add = function(thing, setup) {
-      thing.board = this;
-      
       root.objects.push(thing);
 
       root.setups.push(setup);
@@ -236,7 +241,7 @@
       root.resetRemoved();
 
       // for each thing call step
-      root.iterate('step', game, frameRate);
+      root.iterate('step', game, frameRate, root);
 
       root.iterate('collide', game, root);
 
@@ -364,6 +369,7 @@
   // sprites i have
   var sprites = {
     ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1},
+    missile: {sx: 0, sy: 30, w: 2, h: 10, frames: 1},
     enemyPurple: {sx: 37, sy: 0, w: 42, h: 43, frames: 1}
   };
 
@@ -384,23 +390,26 @@
 
       return {stars: stars, starsCtx: starsCtx};
     },
-    ship: function(game, ship) {
-      var mySprite = game.spritesheet.map[ship.myName],
-      myWidth = mySprite.w,
-      myHeight = mySprite.h,
-      x = y = 0;
+    ship: {
+      setup: function(game, ship) {
+        var mySprite = game.spritesheet.map[ship.myName],
+        myWidth = mySprite.w,
+        myHeight = mySprite.h,
+        x = y = 0;
 
-      if(typeof ship.x == 'undefined' || typeof ship.y == 'undefined') {
-        x = game.width / 2 - myWidth / 2;
+        if(typeof ship.x == 'undefined' || typeof ship.y == 'undefined') {
+          x = game.width / 2 - myWidth / 2;
 
-        y = game.height - 10 - myHeight;
-      } else {
-        x = ship.x;
+          y = game.height - 10 - myHeight;
+        } else {
+          x = ship.x;
 
-        y = ship.y;
-      }
+          y = ship.y;
+        }
 
-      return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
+        return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
+      },
+      fire: FactoryPlayerMissile
     },
     enemy: {
       setup: function(game, enemy, frameRate, set) {
