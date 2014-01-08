@@ -132,7 +132,7 @@
       spritesheet.draw(ctx, root.myName, root.x, root.y);
     };
 
-    root.collide = function(game, board) {
+    root.collide = function(game, board, setup) {
       for(var i = 0, len = board.objects.length; i < len; i++) {
         var current = board.objects[i];
 
@@ -149,6 +149,8 @@
 
           if(distance <= sumRadius) {
             board.remove(root);
+
+            setup.explode();
           }
         }
       }
@@ -501,6 +503,9 @@
           for(var i in list) {
             params[i] = list[i];
           }
+      },
+      explode: function() {
+        console.log('explode');
       }
     }
   };
