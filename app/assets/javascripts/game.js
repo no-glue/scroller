@@ -15,6 +15,12 @@
       root.vy = vy;
 
       root.step = function(game, frameRate, board, setup) {
+        var mySprite = game.spritesheet.map[root.myName];
+
+        root.width = mySprite.w;
+
+        root.height = mySprite.h;
+
         root.y += root.vy * frameRate;
 
         if(root.y < 0) board.remove(root);
@@ -127,6 +133,25 @@
     };
 
     root.collide = function(game, board) {
+      for(var i = 0, len = board.objects.length; i < len; i++) {
+        var current = board.objects[i];
+
+        if(current.type === 'missile' ) {
+          var objectca = root.x + root.height / 2,
+          objectcb = root.y + root.height / 2,
+          currentca = current.x + current.height / 2,
+          currentcb = current.y + current.height / 2;
+
+          var sumRadius = root.height / 2 + current.height / 2;
+
+          var distance = Math.floor(Math.sqrt(Math.pow(objectca - currentca, 2) + Math.pow(objectcb - currentcb, 2)));
+
+
+          if(distance <= sumRadius) {
+            game.setRunning(false);
+          }
+        }
+      }
     };
   };
 
