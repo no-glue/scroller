@@ -148,7 +148,7 @@
 
 
           if(distance <= sumRadius) {
-            game.setRunning(false);
+            board.remove(root);
           }
         }
       }
@@ -211,6 +211,9 @@
     // callbacks for setting up things
     root.setups = [];
 
+    // things to be removed
+    root.removed = [];
+
     // add a new object to the object list
     root.add = function(thing, setup) {
       root.objects.push(thing);
@@ -235,7 +238,11 @@
       for(var i=0, len = root.removed.length; i < len; i++) {
         var idx = root.objects.indexOf(root.removed[i]);
 
-        if(idx > -1) root.objects.splice(idx, 1);
+        if(idx > -1) {
+          root.objects.splice(idx, 1);
+
+          root.setups.splice(idx, 1);
+        }
       }
     };
 
@@ -447,8 +454,6 @@
         var missileTwo = fire(myName, type, x + width, y, vy);
 
         board.add(missileTwo, setup);
-
-        console.log('fire', missileOne);
       }
     },
     enemy: {
