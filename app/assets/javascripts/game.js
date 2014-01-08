@@ -110,7 +110,7 @@
         root.x = game.width - root.width;
       }
 
-      if(game.keys['fire']) setup.addMissiles('missile', 'missile', root.x, root.y, -700, root.width, board, setup.fire);
+      if(game.keys['fire']) setup.addMissiles('missile', 'missile', root.x, root.y, -700, root.width, board, setup.fire, 2);
     }
 
     // todo, root.myName get it locally
@@ -509,20 +509,20 @@
         return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
       },
       fire: FactoryPlayerMissile,
-      addMissiles: function(myName, type, x, y, vy, width, board, fire) {
-        var missileOne = fire(myName, type, x, y, vy);
-
+      addMissiles: function(myName, type, x, y, vy, width, board, fire, count) {
         var setup = function(game, missile) {
           var mySprite = game.spritesheet.map[missile.myName];
 
           return {myWidth: mySprite.w, myHeight: mySprite.h};
         };
 
-        board.add(missileOne, setup);
+        for(var i = 0, shift = 0; i < count; i++) {
+          var missile = fire(myName, type, x + shift, y, vy);
 
-        var missileTwo = fire(myName, type, x + width, y, vy);
+          board.add(missile, setup);
 
-        board.add(missileTwo, setup);
+          shift += width;
+        }
       },
       explode: share.explode,
       addExplosion: FactoryExplosion
