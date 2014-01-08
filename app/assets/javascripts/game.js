@@ -1,10 +1,12 @@
 (function(canvas) {
   // make player missile
-  var FactoryPlayerMissile = function(myName, x, y, vy) {
-    var PlayerMissile = function(myName, x, y, vy) {
+  var FactoryPlayerMissile = function(myName, type, x, y, vy) {
+    var PlayerMissile = function(myName, type, x, y, vy) {
       var root = this;
 
       root.myName = myName;
+
+      root.type = type;
 
       root.x = x;
 
@@ -25,7 +27,7 @@
       root.collide = function(root, board) {};
     };
 
-    return new PlayerMissile(myName, x, y, vy);
+    return new PlayerMissile(myName, type, x, y, vy);
   };
 
   var Player = function(myName) {
@@ -63,7 +65,7 @@
         root.x = game.width - root.width;
       }
 
-      if(game.keys['fire']) setup.addMissiles('missile', root.x, root.y, -700, root.width, board, setup.fire);
+      if(game.keys['fire']) setup.addMissiles('missile', 'missile', root.x, root.y, -700, root.width, board, setup.fire);
     }
 
     // todo, root.myName get it locally
@@ -406,12 +408,12 @@
         return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
       },
       fire: FactoryPlayerMissile,
-      addMissiles: function(myName, x, y, vy, width, board, fire) {
-        var missileOne = fire(myName, x, y, vy);
+      addMissiles: function(myName, type, x, y, vy, width, board, fire) {
+        var missileOne = fire(myName, type, x, y, vy);
 
         board.add(missileOne, function() {});
 
-        var missileTwo = fire(myName, x + width, y, vy);
+        var missileTwo = fire(myName, type, x + width, y, vy);
 
         board.add(missileTwo, function() {});
 
