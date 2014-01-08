@@ -1,4 +1,43 @@
 (function(canvas) {
+  // create explosions
+  var FactoryExplosion = function(myName, type, x, y, livesone) {
+    var Explosion = function(myName, type, x, y, livesone) {
+      var root = this;
+
+      root.myName = myName;
+
+      root.type = type;
+
+      root.x = x;
+
+      root.y = y;
+
+      root.livesone = livesone;
+
+      root.visited = false;
+
+      root.step = function(game, frameRate, board, setup) {
+        var mySprite = game.spritesheet.map[root.myName];
+
+        root.width = mySprite.w;
+
+        root.height = mySprite.h;
+
+        if(root.visited) board.remove(root);
+
+        root.visited = !root.visited;
+      };
+
+      root.draw = function(ctx, spritesheet) {
+        spritesheet.draw(ctx, root.myName, root.x, root.y);
+      };
+
+      root.collide = function(root, board) {};
+    };
+
+    return new Explosion(myName, type, x, y, livesone);
+  };
+
   // make player missile
   var FactoryPlayerMissile = function(myName, type, x, y, vy) {
     var PlayerMissile = function(myName, type, x, y, vy) {
@@ -150,7 +189,7 @@
           if(distance <= sumRadius) {
             board.remove(root);
 
-            setup.explode();
+            setup.explode(board, root.x, root.y, setup.addExplosion, 12);
           }
         }
       }
@@ -252,7 +291,7 @@
     root.iterate = function(funcName) {
       var args = Array.prototype.slice.call(arguments, 1);
 
-      for(var i=0, len = root.objects.length; i < len; i++) {
+      for(var i = 0, len = root.objects.length; i < len; i++) {
         var obj = root.objects[i];
 
         var setup = root.setups[i];
@@ -402,7 +441,19 @@
   var sprites = {
     ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1},
     missile: {sx: 0, sy: 30, w: 2, h: 10, frames: 1},
-    enemyPurple: {sx: 37, sy: 0, w: 42, h: 43, frames: 1}
+    enemyPurple: {sx: 37, sy: 0, w: 42, h: 43, frames: 1},
+    explosion0: { sx: 0, sy: 64, w: 64, h: 64, frames: 1},
+    explosion1: { sx: 64, sy: 64, w: 64, h: 64, frames: 1},
+    explosion2: { sx: 128, sy: 64, w: 64, h: 64, frames: 1},
+    explosion3: { sx: 192, sy: 64, w: 64, h: 64, frames: 1},
+    explosion4: { sx: 256, sy: 64, w: 64, h: 64, frames: 1},
+    explosion5: { sx: 320, sy: 64, w: 64, h: 64, frames: 1},
+    explosion6: { sx: 384, sy: 64, w: 64, h: 64, frames: 1},
+    explosion7: { sx: 448, sy: 64, w: 64, h: 64, frames: 1},
+    explosion8: { sx: 512, sy: 64, w: 64, h: 64, frames: 1},
+    explosion9: { sx: 572, sy: 64, w: 64, h: 64, frames: 1},
+    explosion10: { sx: 636, sy: 64, w: 64, h: 64, frames: 1},
+    explosion11: { sx: 700, sy: 64, w: 64, h: 64, frames: 1}
   };
 
   // behaviour of enemies
@@ -504,9 +555,15 @@
             params[i] = list[i];
           }
       },
-      explode: function() {
+      explode: function(board, x, y, explosion, number) {
+        for(var i = 0; i < number; i++) {
+          var name = 'explosion' + i;
+
+          board.add(explosion(name, 'explosion', x, y, true), function() {});
+        }
         console.log('explode');
-      }
+      },
+      addExplosion: FactoryExplosion
     }
   };
 
