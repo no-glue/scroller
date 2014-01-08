@@ -119,7 +119,7 @@
     }
 
     // check if this collides with something
-    root.collide = function(game, board) {
+    root.collide = function(game, board, setup) {
       for(var i = 0, len = board.objects.length; i < len; i++) {
         var current = board.objects[i];
 
@@ -135,7 +135,9 @@
 
 
           if(distance <= sumRadius) {
-            game.setRunning(false);
+            board.remove(root);
+
+            setup.explode(board, root.x, root.y, setup.addExplosion, 12);
           }
         }
       }
@@ -463,6 +465,18 @@
     basic2: {x: 200, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
   };
 
+  // things to share
+  var share = {
+      explode: function(board, x, y, explosion, number) {
+        for(var i = 0; i < number; i++) {
+          var name = 'explosion' + i;
+
+          board.add(explosion(name, 'explosion', x, y, true), function() {});
+        }
+        console.log('explode');
+      }
+  };
+
   var setups = {
     starfield: function(game, stars, starsCtx) {
       stars.width = game.width;
@@ -509,7 +523,9 @@
         var missileTwo = fire(myName, type, x + width, y, vy);
 
         board.add(missileTwo, setup);
-      }
+      },
+      explode: share.explode,
+      addExplosion: FactoryExplosion
     },
     enemy: {
       setup: function(game, enemy, frameRate, set) {
@@ -557,14 +573,7 @@
             params[i] = list[i];
           }
       },
-      explode: function(board, x, y, explosion, number) {
-        for(var i = 0; i < number; i++) {
-          var name = 'explosion' + i;
-
-          board.add(explosion(name, 'explosion', x, y, true), function() {});
-        }
-        console.log('explode');
-      },
+      explode: share.explode,
       addExplosion: FactoryExplosion
     }
   };
