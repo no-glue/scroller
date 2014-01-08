@@ -147,9 +147,9 @@
 
     root.myName = myName;
 
-    root.blueprint = blueprint;
-
     root.type = type;
+
+    root.blueprint = blueprint;
 
     root.step = function(game, frameRate, board, setup) {
       var params = setup.setup(game, root, frameRate, setup.set);
@@ -458,7 +458,9 @@
 
   // behaviour of enemies
   var enemies = {
-    basic: {x: 100, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
+    basic0: {x: 100, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+    basic1: {x: 150, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+    basic2: {x: 200, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
   };
 
   var setups = {
@@ -539,9 +541,9 @@
 
         var vx = params.A + params.B * Math.sin(params.C * t + params.D),
         vy = params.E + params.F * Math.sin(params.G * t + params.H),
-        x = (typeof enemy.x === 'undefined') ? 0 : enemy.x,
+        x = (typeof enemy.x === 'undefined') ? blueprint.x : enemy.x,
         x = x + frameRate * vx,
-        y = (typeof enemy.y === 'undefined') ? 0 : enemy.y,
+        y = (typeof enemy.y === 'undefined') ? blueprint.y : enemy.y,
         y = y + frameRate * vy;
 
         out.x = x;
@@ -579,7 +581,11 @@
 
   board.add(new Player('ship'), setups.ship);
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0), setups.enemy);
+
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic1), setups.enemy);
+
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic2), setups.enemy);
 
   game.addBoard(board);
 
