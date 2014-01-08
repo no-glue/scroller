@@ -15,11 +15,11 @@
       root.vy = vy;
 
       root.step = function(game, frameRate, board, setup) {
-        var mySprite = game.spritesheet.map[root.myName];
+        var params = setup(game, root);
 
-        root.width = mySprite.w;
+        root.width = params.myWidth;
 
-        root.height = mySprite.h;
+        root.height = params.myHeight;
 
         root.y += root.vy * frameRate;
 
@@ -436,11 +436,17 @@
       addMissiles: function(myName, type, x, y, vy, width, board, fire) {
         var missileOne = fire(myName, type, x, y, vy);
 
-        board.add(missileOne, function() {});
+        var setup = function(game, missile) {
+          var mySprite = game.spritesheet.map[missile.myName];
+
+          return {myWidth: mySprite.w, myHeight: mySprite.h};
+        };
+
+        board.add(missileOne, setup);
 
         var missileTwo = fire(myName, type, x + width, y, vy);
 
-        board.add(missileTwo, function() {});
+        board.add(missileTwo, setup);
 
         console.log('fire', missileOne);
       }
