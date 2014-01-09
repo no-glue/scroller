@@ -363,25 +363,16 @@
       // for each thing call step
       root.iterate('step', game, frameRate, root);
 
-      root.iterate('collide', game, root);
-
       root.finalizeRemoved();
+    };
+
+    root.collide = function(game) {
+      root.iterate('collide', game, root);
     };
 
     // calls draw on each thing
     root.draw = function(ctx, spritesheet) {
       root.iterate('draw', ctx, spritesheet);
-    };
-
-    // end the game
-    root.end = function() {
-      for(var i = 0, len = root.objects.length; i < len; i++) {
-        var object = root.objects[i];
-
-        root.remove(object);
-      }
-
-      root.finalizeRemoved();
     };
   };
 
@@ -470,7 +461,13 @@
 
       for(var i=0, len = boards.length; i < len; i++) {
         if(boards[i]) {
+          boards[i].resetRemoved();
+
           boards[i].step(root, frameRate);
+
+          boards[i].collide(root);
+
+          boards[i].finalizeRemoved();
 
           boards[i].draw(root.ctx, root.spritesheet);
         }
