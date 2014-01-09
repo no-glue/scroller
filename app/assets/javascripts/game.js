@@ -85,7 +85,7 @@
     return new PlayerMissile(myName, type, x, y, vy);
   };
 
-  var Player = function(myName, type, maxVel, alive, addMissiles) {
+  var Player = function(myName, type, maxVel, alive, addMissile) {
     var root = this;
 
     root.myName = myName;
@@ -96,11 +96,11 @@
 
     root.alive = alive;
 
-    root.addMissiles = addMissiles;
+    root.addMissile = addMissile;
 
-    root.fire = function(myName, type, x, y, vy, width, board, addMissiles, count) {
+    root.fire = function(myName, type, x, y, vy, width, board, addMissile, count) {
       for(var i = 0, shift = 0; i < count; i++) {
-        var missile = addMissiles(myName, type, x + shift, y, vy);
+        var missile = addMissile(myName, type, x + shift, y, vy);
 
         board.add(missile, function() {});
 
@@ -108,16 +108,19 @@
       }
     };
 
-    root.step = function(game, frameRate, board, setup) {
-      var position = setup.setup(game, root);
+    root.step = function(game, frameRate, board) {
+      var mySprite = game.spritesheet.map[root.myName];
 
-      root.x = position.x;
+      root.width = mySprite.w;
 
-      root.y = position.y;
+      root.height = mySprite.h;
 
-      root.width = position.myWidth;
+      if(typeof root.x === 'undefined') {
 
-      root.height = position.myHeight;
+        root.x = game.width / 2 - root.width / 2;
+
+        root.y = game.height - 10 - root.height;
+      }
 
       if(game.keys['left']) {root.x -= root.maxVel * frameRate}
       else if(game.keys['right']) {root.x += root.maxVel * frameRate;}
@@ -130,7 +133,7 @@
       }
 
       // todo, observer or helper here
-      if(game.keys['fire']) root.fire('missile', 'missile', root.x, root.y, -700, root.width, board, root.addMissiles, 2);
+      if(game.keys['fire']) root.fire('missile', 'missile', root.x, root.y, -700, root.width, board, root.addMissile, 2);
     }
 
     // todo, root.myName get it locally
@@ -509,32 +512,9 @@ console.log('make exp', exp);
     },
     ship: {
       setup: function(game, ship) {
-        var mySprite = game.spritesheet.map[ship.myName],
-        myWidth = mySprite.w,
-        myHeight = mySprite.h,
-        x = y = 0;
-
-        if(typeof ship.x == 'undefined' || typeof ship.y == 'undefined') {
-          x = game.width / 2 - myWidth / 2;
-
-          y = game.height - 10 - myHeight;
-        } else {
-          x = ship.x;
-
-          y = ship.y;
-        }
-
-        return {x: x, y: y, myWidth: myWidth, myHeight: myHeight};
       },
       fire: FactoryPlayerMissile,
       addMissiles: function(myName, type, x, y, vy, width, board, fire, count) {
-        for(var i = 0, shift = 0; i < count; i++) {
-          var missile = fire(myName, type, x + shift, y, vy);
-
-          board.add(missile, function() {});
-
-          shift += width;
-        }
       },
       explode: share.explode,
       addExplosion: FactoryExplosion
