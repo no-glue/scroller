@@ -85,21 +85,28 @@
     return new PlayerMissile(myName, type, x, y, vy);
   };
 
-  var Player = function(myName) {
+  var Player = function(myName, type, maxVel, alive, addMissiles) {
     var root = this;
 
     root.myName = myName;
 
-    root.vx = 0;
+    root.type = type;
 
-    // quarter second
-    root.reloadTime = 0.25;
+    root.maxVel = maxVel;
 
-    root.reload = root.reloadTime;
+    root.alive = alive;
 
-    root.maxVel = 200;
+    root.addMissiles = addMissiles;
 
-    root.alive = true;
+    root.fire = function(myName, type, x, y, vy, width, board, addMissiles, count) {
+      for(var i = 0, shift = 0; i < count; i++) {
+        var missile = addMissiles(myName, type, x + shift, y, vy);
+
+        board.add(missile, function() {});
+
+        shift += width;
+      }
+    };
 
     root.step = function(game, frameRate, board, setup) {
       var position = setup.setup(game, root);
@@ -122,7 +129,8 @@
         root.x = game.width - root.width;
       }
 
-      if(game.keys['fire']) setup.addMissiles('missile', 'missile', root.x, root.y, -700, root.width, board, setup.fire, 2);
+      // todo, observer or helper here
+      if(game.keys['fire']) root.fire('missile', 'missile', root.x, root.y, -700, root.width, board, root.addMissiles, 2);
     }
 
     // todo, root.myName get it locally
@@ -592,7 +600,7 @@ console.log('make exp', exp);
 
   board.add(new Starfield(1, true), setups.starfield);
 
-  board.add(new Player('ship'), setups.ship);
+  board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile), setups.ship);
 
   board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0), setups.enemy);
 
