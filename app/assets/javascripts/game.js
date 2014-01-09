@@ -1,10 +1,12 @@
 (function(canvas) {
   // create explosions
-  var FactoryExplosion = function(myName, type, x, y, livesone) {
-    var Explosion = function(myName, type, x, y, livesone) {
+  var FactoryExplosion = function(myName, type, x, y, frames, currentFrame) {
+    var Explosion = function(myName, type, x, y, frames, currentFrame) {
       var root = this;
 
-      root.myName = myName;
+      root.baseName = myName;
+
+      root.myName = myName + currentFrame;
 
       root.type = type;
 
@@ -12,9 +14,9 @@
 
       root.y = y;
 
-      root.livesone = livesone;
+      root.frames = frames;
 
-      root.visited = false;
+      root.currentFrame = currentFrame + 1;
 
       root.step = function(game, frameRate, board, setup) {
         var mySprite = game.spritesheet.map[root.myName];
@@ -23,19 +25,22 @@
 
         root.height = mySprite.h;
 
-        if(root.visited) board.remove(root);
+        if(root.currentFrame >= root.frames) board.remove(root);
 
-        root.visited = !root.visited;
+        root.myName = root.baseName + root.currentFrame;
+
+        root.currentFrame++;
       };
 
       root.draw = function(ctx, spritesheet) {
+console.log('explode draw', root.myName, myName);
         spritesheet.draw(ctx, root.myName, root.x, root.y);
       };
 
       root.collide = function(root, board) {};
     };
 
-    return new Explosion(myName, type, x, y, livesone);
+    return new Explosion(myName, type, x, y, frames, currentFrame);
   };
 
   // make player missile
@@ -89,6 +94,8 @@
 
     root.maxVel = 200;
 
+    root.alive = true;
+
     root.step = function(game, frameRate, board, setup) {
       var position = setup.setup(game, root);
 
@@ -134,10 +141,12 @@
           var distance = Math.floor(Math.sqrt(Math.pow(objectca - currentca, 2) + Math.pow(objectcb - currentcb, 2)));
 
 
-          if(distance <= sumRadius) {
+          if(distance <= sumRadius && root.alive) {
             board.remove(root);
 
             setup.explode(board, root.x, root.y, setup.addExplosion, 12);
+
+            root.alive = !root.alive;
           }
         }
       }
@@ -152,6 +161,8 @@
     root.type = type;
 
     root.blueprint = blueprint;
+
+    root.alive = true;
 
     root.step = function(game, frameRate, board, setup) {
       var params = setup.setup(game, root, frameRate, setup.set);
@@ -188,10 +199,12 @@
           var distance = Math.floor(Math.sqrt(Math.pow(objectca - currentca, 2) + Math.pow(objectcb - currentcb, 2)));
 
 
-          if(distance <= sumRadius) {
+          if(distance <= sumRadius && root.alive) {
             board.remove(root);
 
             setup.explode(board, root.x, root.y, setup.addExplosion, 12);
+
+            root.alive = !root.alive;
           }
         }
       }
@@ -355,6 +368,7 @@
     };
 
     root.draw = function(ctx, sprite, x, y, frame) {
+console.log('sprite', sprite);
       var s = root.map[sprite];
 
       if(!frame) frame = 0;
@@ -468,12 +482,10 @@
   // things to share
   var share = {
       explode: function(board, x, y, explosion, number) {
-        for(var i = 0; i < number; i++) {
-          var name = 'explosion' + i;
+        var exp = explosion('explosion', 'explosion', x, y, number, 0);
+console.log('make exp', exp);
 
-          board.add(explosion(name, 'explosion', x, y, true), function() {});
-        }
-        console.log('explode');
+        board.add(exp, function() {});
       }
   };
 
