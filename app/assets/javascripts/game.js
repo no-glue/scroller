@@ -224,11 +224,13 @@ console.log('explode draw', root.myName, myName);
 
     // update starfield
     root.step = function(game, frameRate, board, setup) {
-      var setup = setup(game, stars, starsCtx);
+      stars.width = game.width;
 
-      stars = setup.stars;
+      stars.height = game.height;
 
-      starsCtx = setup.starsCtx;
+      starsCtx.fillStyle = '#000';
+
+      starsCtx.fillRect(0, 0, stars.width, stars.height);
 
       offset += frameRate * speed;
 
@@ -491,15 +493,6 @@ console.log('make exp', exp);
 
   var setups = {
     starfield: function(game, stars, starsCtx) {
-      stars.width = game.width;
-
-      stars.height = game.height;
-
-      starsCtx.fillStyle = '#000';
-
-      starsCtx.fillRect(0, 0, stars.width, stars.height);
-
-      return {stars: stars, starsCtx: starsCtx};
     },
     ship: {
       setup: function(game, ship) {
