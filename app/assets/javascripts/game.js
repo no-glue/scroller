@@ -156,7 +156,6 @@
 
           var distance = Math.floor(Math.sqrt(Math.pow(objectca - currentca, 2) + Math.pow(objectcb - currentcb, 2)));
 
-
           if(distance <= sumRadius && root.alive) {
             board.remove(root);
 
@@ -169,7 +168,7 @@
     }
   };
 
-  var Enemy = function(myName, type, blueprint) {
+  var Enemy = function(myName, type, blueprint, alive, defaults) {
     var root = this;
 
     root.myName = myName;
@@ -178,20 +177,31 @@
 
     root.blueprint = blueprint;
 
-    root.alive = true;
+    root.alive = alive;
 
-    root.step = function(game, frameRate, board, setup) {
-      var params = setup.setup(game, root, frameRate, setup.set);
+    root.defaults = (typeof defaults === 'undefined') ? {x: 0, y: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0} : defaults;
 
-      root.t = params.t;
+    root.step = function(game, frameRate, board) {
+      var mySprite = game.spritesheet.map[root.myName];
 
-      root.x = params.x;
+      root.width = mySprite.w;
 
-      root.y = params.y;
+      root.height = mySprite.h;
 
-      root.width = params.myWidth;
+      for(var i in root.blueprint) root.defaults[i] = root.blueprint[i];
 
-      root.height = params.myHeight;
+      if(typeof root.x === 'undefined') {
+        root.x = root.defaults.x; root.y = root.defaults.y; root.t = 0;
+      }
+
+      root.t += frameRate;
+
+      var vx = root.defaults.A + root.defaults.B * Math.sin(root.defaults.C * root.t + root.defaults.D),
+      vy = root.defaults.E + root.defaults.F * Math.sin(root.defaults.G * root.t + root.defaults.H);
+
+      root.x = root.x + frameRate * vx;
+
+      root.y = root.y + frameRate * vy;
 
       if(root.y > game.height) board.remove(root);
     };
@@ -521,49 +531,8 @@ console.log('make exp', exp);
     },
     enemy: {
       setup: function(game, enemy, frameRate, set) {
-        var t = (typeof enemy.t === 'undefined') ? 0 : enemy.t,
-        t = t + frameRate,
-        blueprint = enemy.blueprint,
-        mySprite = game.spritesheet.map[enemy.myName],
-        myWidth = mySprite.w,
-        myHeight = mySprite.h,
-        params = {
-          A: 0,
-          B: 0,
-          C: 0,
-          D: 0,
-          E: 0,
-          F: 0,
-          G: 0,
-          H: 0
-        },
-        out = {
-          t: t,
-          x: 0,
-          y: 0,
-          myWidth: myWidth,
-          myHeight: myHeight
-        };
-
-        set(params, blueprint);
-
-        var vx = params.A + params.B * Math.sin(params.C * t + params.D),
-        vy = params.E + params.F * Math.sin(params.G * t + params.H),
-        x = (typeof enemy.x === 'undefined') ? blueprint.x : enemy.x,
-        x = x + frameRate * vx,
-        y = (typeof enemy.y === 'undefined') ? blueprint.y : enemy.y,
-        y = y + frameRate * vy;
-
-        out.x = x;
-
-        out.y = y;
-
-        return out;
       },
       set: function(params, list) {
-          for(var i in list) {
-            params[i] = list[i];
-          }
       },
       explode: share.explode,
       addExplosion: FactoryExplosion
@@ -582,11 +551,11 @@ console.log('make exp', exp);
 
   board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile), setups.ship);
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true), setups.enemy);
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic1), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic1, true), setups.enemy);
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic2), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic2, true), setups.enemy);
 
   game.addBoard(board);
 
