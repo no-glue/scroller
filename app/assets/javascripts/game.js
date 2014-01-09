@@ -179,7 +179,7 @@
     }
   };
 
-  var Enemy = function(myName, type, blueprint, alive, defaults) {
+  var Enemy = function(myName, type, blueprint, alive, defaults, addExplosion, explosionFrames) {
     var root = this;
 
     root.myName = myName;
@@ -190,7 +190,17 @@
 
     root.alive = alive;
 
-    root.defaults = (typeof defaults === 'undefined') ? {x: 0, y: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0} : defaults;
+    root.defaults = (typeof defaults === 'undefined' || typeof defaults.x === 'undefined') ? {x: 0, y: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0} : defaults;
+
+    root.addExplosion = addExplosion;
+
+    root.explosionFrames = explosionFrames;
+
+    root.explode = function(name, type, board, x, y, addExplosion, frames) {
+      var exp = addExplosion(name, type, x, y, frames, 0);
+
+      board.add(exp, function() {});
+    };
 
     root.step = function(game, frameRate, board) {
       var mySprite = game.spritesheet.map[root.myName];
@@ -239,7 +249,7 @@
           if(distance <= sumRadius && root.alive) {
             board.remove(root);
 
-            setup.explode(board, root.x, root.y, setup.addExplosion, 12);
+            root.explode('explosion', 'explosion', board, root.x, root.y, root.addExplosion, root.explosionFrames);
 
             root.alive = !root.alive;
           }
@@ -303,17 +313,12 @@
     // the current list of objects
     root.objects = [];
 
-    // callbacks for setting up things
-    root.setups = [];
-
     // things to be removed
     root.removed = [];
 
     // add a new object to the object list
-    root.add = function(thing, setup) {
+    root.add = function(thing) {
       root.objects.push(thing);
-
-      root.setups.push(setup);
 
       return thing;
     };
@@ -335,8 +340,6 @@
 
         if(idx > -1) {
           root.objects.splice(idx, 1);
-
-          root.setups.splice(idx, 1);
         }
       }
     };
@@ -347,14 +350,6 @@
 
       for(var i = 0, len = root.objects.length; i < len; i++) {
         var obj = root.objects[i];
-
-        var setup = root.setups[i];
-
-        if(!i) args.push(setup);
-        else {
-          args.pop();
-          args.push(setup);
-        }
 
         // works on this with args as array
         obj[funcName].apply(obj, args);
@@ -517,37 +512,6 @@
     basic2: {x: 200, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
   };
 
-  // things to share
-  var share = {
-      explode: function(board, x, y, explosion, number) {
-        var exp = explosion('explosion', 'explosion', x, y, number, 0);
-
-        board.add(exp, function() {});
-      }
-  };
-
-  var setups = {
-    starfield: function(game, stars, starsCtx) {
-    },
-    ship: {
-      setup: function(game, ship) {
-      },
-      fire: FactoryPlayerMissile,
-      addMissiles: function(myName, type, x, y, vy, width, board, fire, count) {
-      },
-      explode: share.explode,
-      addExplosion: FactoryExplosion
-    },
-    enemy: {
-      setup: function(game, enemy, frameRate, set) {
-      },
-      set: function(params, list) {
-      },
-      explode: share.explode,
-      addExplosion: FactoryExplosion
-    }
-  };
-
   var game = new Game();
 
   game.setupInput();
@@ -556,15 +520,15 @@
 
   var board = new Gameboard();
 
-  board.add(new Starfield(1, true), setups.starfield);
+  board.add(new Starfield(1, true));
 
-  board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12), setups.ship);
+  board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic1, true), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic1, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic2, true), setups.enemy);
+  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic2, true, {}, FactoryExplosion, 12));
 
   game.addBoard(board);
 
