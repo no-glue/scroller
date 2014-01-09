@@ -1,12 +1,10 @@
 (function(canvas) {
   // create explosions
   var FactoryExplosion = function(myName, type, x, y, frames, currentFrame) {
-    var Explosion = function(myName, type, x, y, frames, currentFrame) {
+    var Explosion = function(myName, type, x, y, frames, startingFrame) {
       var root = this;
 
-      root.baseName = myName;
-
-      root.myName = myName + currentFrame;
+      root.myName = myName;
 
       root.type = type;
 
@@ -16,28 +14,35 @@
 
       root.frames = frames;
 
-      root.currentFrame = currentFrame + 1;
+      root.useFrames = {};
 
-      root.step = function(game, frameRate, board, setup) {
-        var mySprite = game.spritesheet.map[root.myName];
+      root.startingFrame = root.currentFrame = startingFrame;
+
+      root.presetFrames = function(frames, startingFrame) {
+        for(var i = startingFrame; i < frames; i++) {
+          root.useFrames[i] = root.myName + i;
+        }
+      };
+
+      root.step = function(game, frameRate, board) {
+        var mySprite = game.spritesheet.map[root.useFrames[root.currentFrame]];
 
         root.width = mySprite.w;
 
         root.height = mySprite.h;
 
-        if(root.currentFrame >= root.frames) board.remove(root);
-
-        root.myName = root.baseName + root.currentFrame;
+        if(root.currentFrame >= root.frames - 1) board.remove(root);
 
         root.currentFrame++;
       };
 
       root.draw = function(ctx, spritesheet) {
-console.log('explode draw', root.myName, myName);
-        spritesheet.draw(ctx, root.myName, root.x, root.y);
+        spritesheet.draw(ctx, root.useFrames[root.currentFrame], root.x, root.y);
       };
 
       root.collide = function(root, board) {};
+
+      root.presetFrames(root.frames, root.startingFrame);
     };
 
     return new Explosion(myName, type, x, y, frames, currentFrame);
