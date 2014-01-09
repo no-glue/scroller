@@ -85,7 +85,8 @@
     return new PlayerMissile(myName, type, x, y, vy);
   };
 
-  var Player = function(myName, type, maxVel, alive, addMissile) {
+  // todo, single entry to object, e.g. call
+  var Player = function(myName, type, maxVel, alive, addMissile, addExplosion, explosionFrames) {
     var root = this;
 
     root.myName = myName;
@@ -98,6 +99,10 @@
 
     root.addMissile = addMissile;
 
+    root.addExplosion = addExplosion;
+
+    root.explosionFrames = explosionFrames;
+
     root.fire = function(myName, type, x, y, vy, width, board, addMissile, count) {
       for(var i = 0, shift = 0; i < count; i++) {
         var missile = addMissile(myName, type, x + shift, y, vy);
@@ -106,6 +111,12 @@
 
         shift += width;
       }
+    };
+
+    root.explode = function(name, type, board, x, y, addExplosion, frames) {
+      var exp = addExplosion(name, type, x, y, frames, 0);
+
+      board.add(exp, function() {});
     };
 
     root.step = function(game, frameRate, board) {
@@ -159,7 +170,7 @@
           if(distance <= sumRadius && root.alive) {
             board.remove(root);
 
-            setup.explode(board, root.x, root.y, setup.addExplosion, 12);
+            root.explode('explosion', 'explosion', board, root.x, root.y, root.addExplosion, root.explosionFrames);
 
             root.alive = !root.alive;
           }
@@ -396,7 +407,6 @@
     };
 
     root.draw = function(ctx, sprite, x, y, frame) {
-console.log('sprite', sprite);
       var s = root.map[sprite];
 
       if(!frame) frame = 0;
@@ -511,7 +521,6 @@ console.log('sprite', sprite);
   var share = {
       explode: function(board, x, y, explosion, number) {
         var exp = explosion('explosion', 'explosion', x, y, number, 0);
-console.log('make exp', exp);
 
         board.add(exp, function() {});
       }
@@ -549,7 +558,7 @@ console.log('make exp', exp);
 
   board.add(new Starfield(1, true), setups.starfield);
 
-  board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile), setups.ship);
+  board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12), setups.ship);
 
   board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true), setups.enemy);
 
