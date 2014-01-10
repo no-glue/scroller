@@ -545,30 +545,32 @@
 
   // behaviour of enemies
   var enemies = {
-    basic0: {x: 0, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic1: {x: 50, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic2: {x: 100, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic3: {x: 150, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic4: {x: 200, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic5: {x: 250, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic6: {x: 300, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic7: {x: 350, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic8: {x: 0, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic9: {x: 50, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic10: {x: 100, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic11: {x: 150, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic12: {x: 200, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic13: {x: 250, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic14: {x: 300, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic15: {x: 350, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic16: {x: 0, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic17: {x: 50, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic18: {x: 100, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic19: {x: 150, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic20: {x: 200, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic21: {x: 250, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic22: {x: 300, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
-    basic23: {x: 350, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
+    level0: {
+      basic0: {x: 0, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic1: {x: 50, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic2: {x: 100, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic3: {x: 150, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic4: {x: 200, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic5: {x: 250, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic6: {x: 300, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic7: {x: 350, y: -50, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic8: {x: 0, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic9: {x: 50, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic10: {x: 100, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic11: {x: 150, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic12: {x: 200, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic13: {x: 250, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic14: {x: 300, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic15: {x: 350, y: -150, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic16: {x: 0, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic17: {x: 50, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic18: {x: 100, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic19: {x: 150, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic20: {x: 200, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic21: {x: 250, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic22: {x: 300, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
+      basic23: {x: 350, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
+    }
   };
 
   var game = new Game();
@@ -587,53 +589,53 @@
 
   level0.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic0, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic1, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic1, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic2, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic2, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic3, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic3, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic4, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic4, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic5, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic5, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic6, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic6, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic7, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic7, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic8, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic8, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic9, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic9, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic10, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic10, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic11, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic11, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic12, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic12, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic13, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic13, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic14, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic14, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic15, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic15, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic16, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic16, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic17, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic17, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic18, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic18, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic19, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic19, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic20, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic20, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic21, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic21, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic22, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic22, true, {}, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic23, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic23, true, {}, FactoryExplosion, 12));
 
   game.addLevel(level0);
 
