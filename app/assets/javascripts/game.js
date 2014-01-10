@@ -273,45 +273,65 @@
   };
 
   // todo, scrolling background
-  var Starfield = function(speed, clear) {
+  var Starfield = function(speed, numStars, offset, clear, opacity) {
     var root = this;
 
+    root.speed = speed;
+
+    root.numStars = numStars;
+
+    root.offset = offset;
+
+    root.clear = clear;
+
+    root.opacity = opacity;
+
     // draw off screen first
-    var stars = document.createElement('canvas');
+    root.stars = document.createElement('canvas');
 
-    var starsCtx = stars.getContext('2d');
-
-    var offset = 0;
+    root.starsCtx = root.stars.getContext('2d');
 
     // update starfield
-    root.step = function(game, frameRate, board, setup) {
-      stars.width = game.width;
+    root.step = function(game, frameRate, board) {
+      if(root.stars.width != game.width) {
+        root.stars.width = game.width;
 
-      stars.height = game.height;
+        root.stars.height = game.height;
 
-      starsCtx.fillStyle = '#000';
+        root.starsCtx.fillStyle = '#fff';
 
-      starsCtx.fillRect(0, 0, stars.width, stars.height);
+        root.starsCtx.globalAlpha = root.opacity;
 
-      offset += frameRate * speed;
+        for(var i = 0; i < root.numStars; i++) {
+          root.starsCtx.fillRect(Math.random() * root.stars.width, Math.random() * root.stars.height, 2, 2);
+        }
+      }
 
-      offset = offset % stars.height;
+      if(root.clear) {
+        root.starsCtx.fillStyle = '#000';
+
+        root.starsCtx.fillRect(0, 0, root.stars.width, root.stars.height);
+      }
+
+      root.offset += frameRate * root.speed;
+
+      root.offset = root.offset % root.stars.height;
     };
 
     // this is called every frame
     // to draw starfield on to the canvas
     root.draw = function(ctx) {
-      var intOffset = Math.floor(offset);
+      var intOffset = Math.floor(root.offset);
 
-      var remaining = stars.height - intOffset;
+      var remaining = root.stars.height - intOffset;
 
       // draw the top half of the starfield
       if(intOffset > 0) {
-        ctx.drawImage(stars, 0, remaining, stars.width, intOffset, 0, 0, stars.width, intOffset);
+        ctx.drawImage(root.stars, 0, remaining, root.stars.width, intOffset, 0, 0, root.stars.width, intOffset);
       }
 
       if(remaining > 0){
-        ctx.drawImage(stars, 0, 0, stars.width, remaining, 0, intOffset, stars.width, remaining);
+        ctx.drawImage(root.stars, 0, 0, root.stars.width, remaining, 0, intOffset, root.stars.width, remaining);
       }
     };
 
@@ -647,11 +667,29 @@
 
   game.setupDrawing(canvas, spritesheet);
 
-  var background = new Gameboard('background');
+  var backgroundBlack = new Gameboard('background');
 
-  background.add(new Starfield(1, true));
+  backgroundBlack.add(new Starfield(20, 100, 0, true, 1));
 
-  game.addBoard(background);
+  game.addBoard(backgroundBlack);
+
+  var backgroundStars = new Gameboard('background');
+
+  backgroundStars.add(new Starfield(20, 100, 0, false, 1));
+
+  game.addBoard(backgroundStars);
+
+  var backgroundStarsDistant = new Gameboard('background');
+
+  backgroundStarsDistant.add(new Starfield(20, 100, 0, false, 0.75));
+
+  game.addBoard(backgroundStarsDistant);
+
+  var backgroundStarsMoreDistant = new Gameboard('background');
+
+  backgroundStarsMoreDistant.add(new Starfield(20, 100, 0, false, 0.25));
+
+  game.addBoard(backgroundStarsMoreDistant);
 
   var level0 = new Gameboard('level');
 
