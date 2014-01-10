@@ -542,59 +542,59 @@
 
   game.addBoard(background);
 
-  var board = new Gameboard();
+  var level0 = new Gameboard();
 
-  board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
+  level0.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic0, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic1, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic1, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic2, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic2, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic3, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic3, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic4, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic4, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic5, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic5, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic6, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic6, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic7, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic7, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic8, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic8, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic9, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic9, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic10, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic10, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic11, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic11, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic12, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic12, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic13, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic13, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic14, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic14, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic15, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic15, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic16, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic16, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic17, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic17, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic18, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic18, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic19, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic19, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic20, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic20, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic21, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic21, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic22, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic22, true, {}, FactoryExplosion, 12));
 
-  board.add(new Enemy('enemyPurple', 'enemy', enemies.basic23, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic23, true, {}, FactoryExplosion, 12));
 
-  game.addBoard(board);
+  game.addBoard(level0);
 
   spritesheet.load(sprites, game.loop);
 
