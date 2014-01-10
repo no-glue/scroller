@@ -536,9 +536,13 @@
 
   game.setupDrawing(canvas, spritesheet);
 
-  var board = new Gameboard();
+  var background = new Gameboard();
 
-  board.add(new Starfield(1, true));
+  background.add(new Starfield(1, true));
+
+  game.addBoard(background);
+
+  var board = new Gameboard();
 
   board.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
 
