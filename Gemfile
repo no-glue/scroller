@@ -34,6 +34,11 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'sqlite3'
+end
+
+group :production do
+  gem 'pg'
 end
 
 # Use ActiveModel has_secure_password
