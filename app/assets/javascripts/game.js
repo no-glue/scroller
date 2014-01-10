@@ -179,7 +179,7 @@
     }
   };
 
-  var Enemy = function(myName, type, blueprint, alive, defaults, addExplosion, explosionFrames) {
+  var Enemy = function(myName, type, blueprint, alive, defaults, addExplosion, explosionFrames, behaviour) {
     var root = this;
 
     root.myName = myName;
@@ -195,6 +195,8 @@
     root.addExplosion = addExplosion;
 
     root.explosionFrames = explosionFrames;
+
+    root.behaviour = behaviour;
 
     root.explode = function(name, type, board, x, y, addExplosion, frames) {
       var exp = addExplosion(name, type, x, y, frames, 0);
@@ -217,12 +219,11 @@
 
       root.t += frameRate;
 
-      var vx = root.defaults.A + root.defaults.B * Math.sin(root.defaults.C * root.t + root.defaults.D),
-      vy = root.defaults.E + root.defaults.F * Math.sin(root.defaults.G * root.t + root.defaults.H);
+      var v = root[root.behaviour](root.defaults, root.t);
 
-      root.x = root.x + frameRate * vx;
+      root.x = root.x + frameRate * v.vx;
 
-      root.y = root.y + frameRate * vy;
+      root.y = root.y + frameRate * v.vy;
 
       if(root.y > game.height) board.remove(root);
     };
@@ -245,7 +246,6 @@
 
           var distance = Math.floor(Math.sqrt(Math.pow(objectca - currentca, 2) + Math.pow(objectcb - currentcb, 2)));
 
-
           if(distance <= sumRadius && root.alive) {
             board.remove(root);
 
@@ -255,6 +255,20 @@
           }
         }
       }
+    };
+
+    root.wiggleRight = function(defaults, t) {
+      return{
+        vx: defaults.A + defaults.B * Math.sin(defaults.C * t + defaults.D),
+        vy: defaults.E + defaults.F * Math.sin(defaults.G * t + defaults.H)
+      };
+    };
+
+    root.wiggleLeft = function(defaults, t) {
+      return{
+        vx: defaults.A + defaults.B * Math.cos(defaults.C * t + defaults.D),
+        vy: defaults.E + defaults.F * Math.cos(defaults.G * t + defaults.H)
+      };
     };
   };
 
@@ -529,6 +543,7 @@
     ship: {sx: 0, sy: 0, w: 37, h: 42, frames: 1},
     missile: {sx: 0, sy: 30, w: 2, h: 10, frames: 1},
     enemyPurple: {sx: 37, sy: 0, w: 42, h: 43, frames: 1},
+    enemyBee: {sx: 79, sy: 0, w: 37, h: 43, frames: 1},
     explosion0: { sx: 0, sy: 64, w: 64, h: 64, frames: 1},
     explosion1: { sx: 64, sy: 64, w: 64, h: 64, frames: 1},
     explosion2: { sx: 128, sy: 64, w: 64, h: 64, frames: 1},
@@ -570,6 +585,32 @@
       basic21: {x: 250, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
       basic22: {x: 300, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100},
       basic23: {x: 350, y: -250, sprite: 'enemyPurple', B: 100, C: 2, E: 100}
+    },
+    level1: {
+      basic0: {x: 0, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic1: {x: 50, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic2: {x: 100, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic3: {x: 150, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic4: {x: 200, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic5: {x: 250, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic6: {x: 300, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic7: {x: 350, y: -50, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic8: {x: 0, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic9: {x: 50, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic10: {x: 100, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic11: {x: 150, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic12: {x: 200, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic13: {x: 250, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic14: {x: 300, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic15: {x: 350, y: -150, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic16: {x: 0, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic17: {x: 50, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic18: {x: 100, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic19: {x: 150, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic20: {x: 200, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic21: {x: 250, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic22: {x: 300, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100},
+      basic23: {x: 350, y: -250, sprite: 'enemyBee', B: 100, C: 2, E: 100}
     }
   };
 
@@ -589,55 +630,109 @@
 
   level0.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic0, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic0, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic1, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic1, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic2, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic2, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic3, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic3, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic4, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic4, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic5, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic5, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic6, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic6, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic7, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic7, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic8, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic8, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic9, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic9, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic10, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic10, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic11, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic11, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic12, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic12, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic13, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic13, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic14, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic14, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic15, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic15, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic16, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic16, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic17, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic17, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic18, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic18, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic19, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic19, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic20, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic20, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic21, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic21, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic22, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic22, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
-  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic23, true, {}, FactoryExplosion, 12));
+  level0.add(new Enemy('enemyPurple', 'enemy', enemies.level0.basic23, true, {}, FactoryExplosion, 12, 'wiggleRight'));
 
   game.addLevel(level0);
+
+  var level1 = new Gameboard('level');
+
+  level1.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic0, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic1, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic2, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic3, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic4, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic5, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic6, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic7, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic8, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic9, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic10, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic11, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic12, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic13, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic14, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic15, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic16, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic17, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic18, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic19, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic20, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic21, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic22, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  level1.add(new Enemy('enemyBee', 'enemy', enemies.level1.basic23, true, {}, FactoryExplosion, 12, 'wiggleLeft'));
+
+  game.addLevel(level1);
 
   spritesheet.load(sprites, game.loop);
 
