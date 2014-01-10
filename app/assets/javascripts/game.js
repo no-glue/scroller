@@ -307,8 +307,10 @@
   // game board
   // handles, contains sprites
   // layer of graphics, drawing happens here
-  var Gameboard = function() {
+  var Gameboard = function(type) {
     var root = this;
+
+    root.type = type;
 
     // the current list of objects
     root.objects = [];
@@ -374,6 +376,18 @@
     root.draw = function(ctx, spritesheet) {
       root.iterate('draw', ctx, spritesheet);
     };
+
+    root.isComplete = function() {
+      if(root.type === 'level') {
+        for(var i = 0, len = root.objects.length; i < len; i++) {
+          var object = root.objects[i];
+
+          if(object.type === 'enemy') return false;
+        }
+      }
+
+      return true;
+    };
   };
 
   // can have only one spritesheet
@@ -407,7 +421,11 @@
     var root = this;
 
     // game loop
+    // boards with sprites, usually background
     var boards = [];
+
+    // boards with sprites, usually player and such
+    var levels = [];
 
     var KEY_CODES = {37: 'left', 39: 'right', 32: 'fire'};
 
@@ -452,12 +470,35 @@
       boards.push(board);
     };
 
+    // add level to list
+    root.addLevel = function(level) {
+      levels.push(level);
+    };
+
+    // merge level with boards
+    root.mergeLevel = function() {
+      var last = boards[boards.length - 1];
+
+      if(typeof last !== 'undefined' && last.type !== 'level') boards.push(levels.pop());
+    };
+
+    // pop level from boards
+    root.popLevel = function() {
+      var last = boards[boards.length - 1];
+
+      if(typeof last !== 'undefined' && last.type === 'level' && last.isComplete()) boards.pop();
+    };
+
     // game loop
     // everything happens here
     root.loop = function () {
       var frames = 30;
 
       var frameRate = frames / 1000;
+
+      root.popLevel();
+
+      root.mergeLevel();
 
       for(var i=0, len = boards.length; i < len; i++) {
         if(boards[i]) {
@@ -536,13 +577,13 @@
 
   game.setupDrawing(canvas, spritesheet);
 
-  var background = new Gameboard();
+  var background = new Gameboard('background');
 
   background.add(new Starfield(1, true));
 
   game.addBoard(background);
 
-  var level0 = new Gameboard();
+  var level0 = new Gameboard('level');
 
   level0.add(new Player('ship', 'ship', 200, true, FactoryPlayerMissile, FactoryExplosion, 12));
 
@@ -594,7 +635,7 @@
 
   level0.add(new Enemy('enemyPurple', 'enemy', enemies.basic23, true, {}, FactoryExplosion, 12));
 
-  game.addBoard(level0);
+  game.addLevel(level0);
 
   spritesheet.load(sprites, game.loop);
 
