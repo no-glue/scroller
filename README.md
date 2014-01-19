@@ -2,4 +2,4 @@
 
 This is space shooter built with javascript and rails.
 
-You can see it [here](spaceblaster.herokuapp.com)
+You can see it [spaceblaster.herokuapp.com]
